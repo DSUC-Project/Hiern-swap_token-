@@ -2,9 +2,13 @@
 const nextConfig = {
   reactStrictMode: true,
   
-  // 1. Ép Next.js dịch code của các thư viện này (Tránh lỗi treo build)
+  // 1. Tắt tạo Source Maps khi build (Tiết kiệm rất nhiều RAM)
+  productionBrowserSourceMaps: false,
+
+  // 2. Bắt buộc: Xử lý các thư viện nặng của Solana
   transpilePackages: [
     "@coral-xyz/anchor",
+    "@solana/spl-token",
     "@solana/wallet-adapter-base",
     "@solana/wallet-adapter-react",
     "@solana/wallet-adapter-react-ui",
@@ -12,7 +16,7 @@ const nextConfig = {
     "@solana/web3.js",
   ],
 
-  // 2. Bỏ qua lỗi type/lint để ưu tiên deploy được trước
+  // 3. Bỏ qua kiểm tra lỗi (Giúp build nhanh hơn và không bị chặn)
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -20,7 +24,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
-  // 3. Cấu hình Polyfill cho Solana
+  // 4. Cấu hình Webpack để không bị lỗi module Node.js
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
