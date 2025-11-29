@@ -1,18 +1,26 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  
+  // 1. Ép Next.js dịch code của các thư viện này (Tránh lỗi treo build)
+  transpilePackages: [
+    "@coral-xyz/anchor",
+    "@solana/wallet-adapter-base",
+    "@solana/wallet-adapter-react",
+    "@solana/wallet-adapter-react-ui",
+    "@solana/wallet-adapter-wallets",
+    "@solana/web3.js",
+  ],
 
-  // 1. Quan trọng: Bỏ qua lỗi TypeScript khi build (giúp không bị chặn bởi lỗi type nhỏ)
+  // 2. Bỏ qua lỗi type/lint để ưu tiên deploy được trước
   typescript: {
     ignoreBuildErrors: true,
   },
-
-  // 2. Quan trọng: Bỏ qua lỗi ESLint (warning không làm chết build)
   eslint: {
     ignoreDuringBuilds: true,
   },
 
-  // 3. Quan trọng: Fix lỗi thiếu module của thư viện Solana/Anchor
+  // 3. Cấu hình Polyfill cho Solana
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
