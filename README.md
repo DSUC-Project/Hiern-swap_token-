@@ -156,9 +156,10 @@ Kết quả: Pool được tạo, 10,000 Token A được mint vào Vault.
 
 Hành động User (Mua): Nhập 1 SOL -> Nhấn SWAP NGAY.
 
-Kết quả: Ví giảm 1 SOL, tăng 100 Token A.
+Kết quả: Ví giảm 1 SOL, tăng 10 Token A.
 
-Hành động User (Bán): Nhấn "Đảo chiều", Nhập 100 Token -> Nhấn SWAP NGAY.
+Hành động User (Bán): Nhấn "Đảo chiều", Nhập 10 Token -> Nhấn SWAP NGAY.
 
-Kết quả: Ví giảm 100 Token A, tăng 1 SOL.
+Kết quả: Ví giảm 10 Token A, tăng 1 SOL.
+
 
