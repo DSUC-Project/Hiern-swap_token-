@@ -1,87 +1,177 @@
-﻿# Hiern-swap_token-
-# Hiern-swap_token-
+🦄 Solana Fixed-Rate Token Swap (Anchor + Next.js)
+Một bể giao dịch phi tập trung (decentralized exchange pool) được xây dựng trên Solana sử dụng Anchor Framework, với cơ chế hoán đổi (swap) tỷ giá cố định giữa SOL và một SPL Token tùy chỉnh. Dự án bao gồm một Frontend Next.js đầy đủ chức năng tích hợp ví và bảng điều khiển cho Admin.
 
-# Solana Fixed-Rate Token Swap (Anchor + Next.js)
+Cluster: Localnet (Tương thích Devnet)
 
-A **decentralized exchange pool** built on Solana using Anchor, featuring a fixed-rate swap mechanism between SOL and a custom SPL Token.
-Includes a fully functional **Next.js frontend** with wallet integration and an admin dashboard.
+Program: Anchor 0.31
 
-- **Cluster:** Localnet (default)
-- **Program:** Anchor 0.31 (Latest)
-- **Frontend:** Next.js + Tailwind + Solana Wallet Adapter
+Frontend: Next.js + Tailwind + Solana Wallet Adapter
 
-## 💡 Features
+💡 Tính Năng
+Cơ chế Swap Tỷ giá Cố định: Hoán đổi SOL lấy Token A (và ngược lại) dựa trên tỷ giá được Admin thiết lập cứng (hardcoded).
 
-- **Automated Market Maker (AMM) Basic:** Exchange SOL for Token A (and vice-versa) instantly.
-- **Fixed Rate Mechanism:** Hardcoded exchange rate set by Admin upon initialization.
-- **Liquidity Management:**
-  - Admin (Authority) initializes the pool and mints initial tokens.
-  - Pool PDA securely holds SOL and SPL Token reserves.
-- **Secure Architecture:**
-  - Uses **PDA (Program Derived Address)** to manage assets without private keys.
-  - Comprehensive safety checks (overflow protection, liquidity verification).
-- **User-Friendly UI:**
-  - One-click swap interface.
-  - Real-time balance updates.
-  - Dynamic "Switch Direction" feature.
+Thanh khoản Tự động: Chương trình tự động mint (đúc) token vào bể (pool) ngay khi khởi tạo.
 
-## ⚡ Quick Start (Localnet)
+Swap Hai Chiều:
 
-### 1) Prerequisites
-- Node.js 18+ and Yarn/NPM
-- Rust 1.75+ & Solana CLI 1.18+
-- Anchor CLI 0.31.x (`anchor --version`)
+SOL → Token: Người dùng gửi SOL, nhận Token A.
 
-### 2) Backend Setup (Smart Contract)
-First, ensure you handle the new Anchor version requirements.
+Token → SOL: Người dùng gửi Token A, nhận SOL (từ dự trữ của pool).
 
-**A. Configure Rust Environment**
-Create a config file to prevent `proc_macro2` errors:
-```bash
+Kiến trúc Bảo mật: Sử dụng PDA (Program Derived Addresses) để quản lý tài sản mà không cần private key.
+
+An toàn là trên hết: Kiểm tra toàn diện về thanh khoản, số dư người dùng và tràn số học (math overflows).
+
+✅ Các Tiêu Chí Đã Hoàn Thành (Requirements Completed)
+Dựa trên yêu cầu của đồ án, các tính năng sau đã được hiện thực hóa trong Smart Contract:
+
+1. Solana Program (Anchor)
+[x] Khởi tạo Pool (Initialize Pool):
+
+Admin tạo swap pool thông qua instruction initialize_pool.
+
+Program tự động MINT số lượng token tùy chỉnh (Ví dụ: 10,000 Token) vào Pool PDA (token_a_vault).
+
+Admin nạp SOL (thông qua cơ chế nạp hoặc swap) vào Pool PDA.
+
+Tỷ giá hoán đổi cố định được lưu trong trạng thái (state).
+
+[x] Chức năng Swap:
+
+swap_sol_to_token_a: User gửi SOL → Nhận Token A.
+
+swap_token_a_to_sol: User gửi Token A → Nhận SOL.
+
+Cả hai hướng đều sử dụng chung một tỷ giá cố định (pool.rate).
+
+[x] Kiểm tra An toàn (Safety Checks):
+
+Xác thực số lượng đầu vào amount > 0.
+
+Kiểm tra Pool có đủ thanh khoản (Liquidty) cho cả SOL và Token trước khi chuyển.
+
+Xác minh User có đủ số dư để thực hiện giao dịch.
+
+[x] Quyền sở hữu PDA:
+
+Tài khoản Pool (pool PDA) sở hữu token_a_vault và giữ dự trữ SOL.
+
+[x] Quyền Mint:
+
+Program nắm giữ quyền Mint (thông qua PDA mint_auth) để tạo token tùy chỉnh (Token A).
+
+2. Frontend
+[x] Giao diện Swap: Form nhập liệu, tự động tính toán kết quả Estimated Output (Số lượng ước tính nhận được).
+
+[x] Hiển thị thông tin Pool: Hiển thị tỷ giá và trạng thái kết nối.
+
+[x] Kết nối Ví: Tích hợp Phantom, Solflare, Backpack.
+
+[x] Thực hiện Swap: Gửi transaction và hiển thị thông báo trạng thái.
+
+[x] Xử lý Lỗi: Thông báo Toast rõ ràng khi User gặp lỗi hoặc hủy giao dịch.
+
+🚀 Hướng Dẫn Cài Đặt Nhanh (Localnet)
+1. Yêu cầu Tiên quyết
+Node.js 18+ & Yarn/NPM
+
+Rust 1.75+ & Solana CLI 1.18+
+
+Anchor CLI 0.31.x
+
+2. Cài đặt Backend (Smart Contract)
+Cấu hình Rust: (Để tránh lỗi proc_macro2)
+
+Bash
+'''
 mkdir .cargo
 echo '[build]
 rustflags = ["--cfg", "procmacro2_semver_exempt"]' > .cargo/config.toml
-B. Build & DeployOpen a terminal (Terminal 1) to run the validator:Bashsolana-test-validator
-Open another terminal (Terminal 2) at project root:Bashyarn install
-anchor keys sync   # Sync program ID
-anchor build       # Compile
-anchor deploy      # Deploy to Localnet
-3) Frontend SetupBashcd app
+'''
+Chạy Validator & Deploy:
+
+Bash
+
+# Terminal 1: Chạy mạng local
+'''
+solana-test-validator
+'''
+# Terminal 2: Tại thư mục gốc dự án
+'''
+yarn install
+anchor keys sync    # Đồng bộ ID
+anchor build        # Biên dịch
+anchor deploy       # Triển khai
+'''
+3. Cài đặt Frontend
+Bash
+'''
+cd app
 npm install
-Important: Link your smart contract to the UI by copying the IDL.Bash# Run this from the 'app' folder
+'''
+# Liên kết Smart Contract với Giao diện (Copy IDL)
+'''
 cp ../target/idl/fixed_rate_swap.json ./src/idl/
-Run the UI:Bashnpm run dev
-Open http://localhost:3000 and connect your Phantom/Solflare wallet (set to Localhost).</> Architecture & Flow (Diagram)This diagram illustrates how the Swap Program interacts with the User and the Vaults.Đoạn mãgraph TD
+'''
+# Chạy ứng dụng
+'''
+npm run dev
+Mở trình duyệt tại: http://localhost:3000.
+'''
+💻 Kiến trúc & Vai trò
+Biểu đồ dưới đây mô tả luồng dữ liệu của hệ thống:
+
+Đoạn mã
+
+graph TD
     Admin[Admin / Initializer] -->|1. initialize_pool| PoolPDA
     PoolPDA[POOL PDA Authority]
     
     subgraph On-Chain State
-        PoolPDA -- owns --> TokenVault[Token A Vault]
-        PoolPDA -- owns --> TokenMint[Token A Mint]
-        PoolPDA -- holds --> SOL_Reserve[SOL Balance]
+        PoolPDA -- sở hữu --> TokenVault[Token A Vault]
+        PoolPDA -- sở hữu --> TokenMint[Token A Mint]
+        PoolPDA -- giữ --> SOL_Reserve[SOL Balance]
     end
 
-    User[USER] -- 2. Swap SOL to Token --> PoolPDA
-    PoolPDA -- Transfer Token --> User
+    User[USER] -- 2. Swap SOL sang Token --> PoolPDA
+    PoolPDA -- Chuyển Token (CPI) --> User
     
-    User -- 3. Swap Token to SOL --> TokenVault
-    PoolPDA -- Transfer SOL --> User
-🔄 Usage Flow1. Admin Initialization (First Time Setup)Before any users can swap, the pool must be created.Connect Wallet on Localhost.Scroll down to Admin Zone.Click Initialize Pool.Action: Creates Pool PDA, Mints 10,000 Token A to the Vault.2. User Swap (SOL → Token)Enter amount of SOL (e.g., 1 SOL).Review estimated output based on fixed rate.Click SWAP NGAY.On-chain: User sends SOL to Pool PDA -> Pool sends Token A to User.3. User Swap (Token → SOL)Click ⬇️ Đảo chiều (Switch Direction).Enter amount of Token A.Click SWAP NGAY.On-chain: User sends Token A to Vault -> Pool sends SOL to User.⚙️ Program Details (Anchor)Location: programs/hien_swap_tokenPDAs (Program Derived Addresses)PDASeedsDescriptionPool Stateb"pool"Stores admin key and exchange rate.Token Vaultb"token_a_vault"The SPL Token Account holding liquidity.Mint Authb"mint_auth"Authority to mint new tokens (if needed).State StructRust#[account]
-pub struct Pool {
-    pub admin: Pubkey, // Admin authority
-    pub rate: u64,     // Exchange rate (e.g., 100 => 1 SOL = 100 Token)
-}
-🐛 TroubleshootingError: Account Not InitializedFix: You forgot to click the black "Initialize Pool" button in the Admin Zone.Error: Signature verification failed / Blockhash not foundFix: Ensure your wallet is on Localhost (Settings -> Developer Settings -> Change Network). Ensure solana-test-validator is running.Frontend doesn't update after code changeFix: Remember to run anchor build and copy the json file to app/src/idl/ again.✅ Assignment Submission
+    User -- 3. Swap Token sang SOL --> TokenVault
+    PoolPDA -- Chuyển SOL (System) --> User
+Các Vai trò
+Admin: Khởi tạo pool, thiết lập tỷ giá và mint thanh khoản ban đầu.
 
-Requirements Completed
-[x] initialize_pool instruction (PDA setup, Minting)
+User: Kết nối ví để swap SOL/Token.
 
-[x] swap_sol_to_token instruction (System Transfer + CPI)
+Pool PDA: Một tài khoản trung gian tin cậy (escrow) giữ toàn bộ tài sản.
 
-[x] swap_token_to_sol instruction (CPI + Invoke Signed)
+🧪 Kịch bản Kiểm thử (Testing)
+Bạn có thể kiểm tra luồng hoạt động bằng Frontend đã cung cấp:
 
-[x] Next.js Frontend with Wallet Adapter
+Thiết lập: Kết nối Ví (mạng Localhost) & Airdrop SOL (solana airdrop 10 <VÍ_CỦA_BẠN>).
 
-[x] Dynamic Rate Calculation UI
+Hành động Admin: Nhấn nút "Initialize Pool" (Nút màu đen ở khu vực Admin Zone).
 
-[x] Error handling & Toast notifications
+Kết quả: Pool được tạo, 10,000 Token A được mint vào Vault.
+
+Hành động User (Mua): Nhập 1 SOL -> Nhấn SWAP NGAY.
+
+Kết quả: Ví giảm 1 SOL, tăng 100 Token A.
+
+Hành động User (Bán): Nhấn "Đảo chiều", Nhập 100 Token -> Nhấn SWAP NGAY.
+
+Kết quả: Ví giảm 100 Token A, tăng 1 SOL.
+
+📂 Cấu Trúc Dự Án
+anchor-swap-project/
+├── .cargo/                 # Cấu hình Rust
+├── programs/
+│   └── hien_swap_token/    # Smart Contract (Rust/Anchor)
+│       └── src/lib.rs      # Logic cốt lõi
+├── app/                    # Frontend (Next.js)
+│   ├── src/
+│   │   ├── components/     # UI Component cho Swap
+│   │   ├── context/        # Quản lý Ví (Wallet Context)
+│   │   └── idl/            # File định nghĩa giao diện Contract
+├── tests/                  # Các bài test TypeScript
+└── Anchor.toml             # File cấu hình Anchor
