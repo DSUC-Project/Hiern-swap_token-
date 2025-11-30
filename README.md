@@ -162,16 +162,3 @@ Hành động User (Bán): Nhấn "Đảo chiều", Nhập 100 Token -> Nhấn S
 
 Kết quả: Ví giảm 100 Token A, tăng 1 SOL.
 
-📂 Cấu Trúc Dự Án
-anchor-swap-project/
-├── .cargo/                 # Cấu hình Rust
-├── programs/
-│   └── hien_swap_token/    # Smart Contract (Rust/Anchor)
-│       └── src/lib.rs      # Logic cốt lõi
-├── app/                    # Frontend (Next.js)
-│   ├── src/
-│   │   ├── components/     # UI Component cho Swap
-│   │   ├── context/        # Quản lý Ví (Wallet Context)
-│   │   └── idl/            # File định nghĩa giao diện Contract
-├── tests/                  # Các bài test TypeScript
-└── Anchor.toml             # File cấu hình Anchor
