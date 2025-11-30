@@ -83,41 +83,41 @@ Anchor CLI 0.31.x
 Cấu hình Rust: (Để tránh lỗi proc_macro2)
 
 Bash
-'''
+```
 mkdir .cargo
 echo '[build]
 rustflags = ["--cfg", "procmacro2_semver_exempt"]' > .cargo/config.toml
-'''
+```
 Chạy Validator & Deploy:
 
 Bash
 
 # Terminal 1: Chạy mạng local
-'''
+```
 solana-test-validator
-'''
+```
 # Terminal 2: Tại thư mục gốc dự án
-'''
+```
 yarn install
 anchor keys sync    # Đồng bộ ID
 anchor build        # Biên dịch
 anchor deploy       # Triển khai
-'''
+```
 3. Cài đặt Frontend
 Bash
-'''
+```
 cd app
 npm install
-'''
+```
 # Liên kết Smart Contract với Giao diện (Copy IDL)
-'''
+```
 cp ../target/idl/fixed_rate_swap.json ./src/idl/
-'''
+```
 # Chạy ứng dụng
-'''
+```
 npm run dev
 Mở trình duyệt tại: http://localhost:3000.
-'''
+```
 💻 Kiến trúc & Vai trò
 Biểu đồ dưới đây mô tả luồng dữ liệu của hệ thống:
 
@@ -161,5 +161,6 @@ Kết quả: Ví giảm 1 SOL, tăng 10 Token A.
 Hành động User (Bán): Nhấn "Đảo chiều", Nhập 10 Token -> Nhấn SWAP NGAY.
 
 Kết quả: Ví giảm 10 Token A, tăng 1 SOL.
+
 
 
