@@ -160,7 +160,6 @@ Kết quả: Ví giảm 1 SOL, tăng 10 Token A.
 
 Hành động User (Bán): Nhấn "Đảo chiều", Nhập 10 Token -> Nhấn SWAP NGAY.
 
-Kết quả: Ví giảm 10 Token A, tăng 1 SOL.
 
 
 
